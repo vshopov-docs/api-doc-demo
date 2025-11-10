@@ -21,7 +21,7 @@ paths:
     get:
       operationId: getSystemStatus
       summary: Get current system status
-      description: Retrieve the system status as a JSON object: battery level, energy flow, battery charge limit.
+      description: "Retrieve the system status as a JSON object: battery level, energy flow, battery charge limit."
       responses:
         '200':
           description: Successful operation
