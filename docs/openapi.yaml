@@ -2,10 +2,13 @@ openapi: 3.0.3
 info:
   title: Solar PLC API
   description: |
+    # Introduction to the Solar PLC API
     The Solar PLC API describes a small monitoring and control interface for a
      solar-battery system managed by a PLC. The API exposes endpoints to read
      live system data such as battery level, energy flow, and battery charge
-     limit. The specification demonstrates standard REST conventions, API
+     limit.
+    ## Authentication
+     The specification demonstrates standard REST conventions, API
      key authentication, and structured JSON responses.
   version: 1.0.0
   contact:
