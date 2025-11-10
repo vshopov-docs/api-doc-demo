@@ -7,7 +7,7 @@ info:
      solar-battery system managed by a PLC. The API exposes endpoints to read
      live system data such as battery level, energy flow, and battery charge
      limit.
-    ## Authentication
+    # Authentication
      The specification demonstrates standard REST conventions, API
      key authentication, and structured JSON responses.
   version: 1.0.0
