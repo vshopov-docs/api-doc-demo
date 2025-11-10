@@ -7,6 +7,20 @@
     <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
   </head>
   <body>
-    <redoc spec-url="./openapi.yaml"></redoc>
+    <p>TEsT</p>
+    <div id="redoc"></div>
+    <script>
+      Redoc.init(
+        './openapi.yaml',               
+        { hideDownloadButton: false },
+        document.getElementById('redoc')
+      ).catch(e => {
+        console.error('ReDoc failed:', e);
+        const pre = document.createElement('pre');
+        pre.textContent = 'ReDoc error: ' + (e && e.message ? e.message : e);
+        document.body.appendChild(pre);
+      });
+    </script>
   </body>
+
 </html>
