@@ -1,0 +1,135 @@
+openapi: 3.0.4
+info:
+  title: Solar PLC API
+  description: |
+    The Solar PLC API describes a small monitoring and control interface for a
+     solar-battery system managed by a PLC. The API exposes endpoints to read
+     live system data such as battery level, energy flow, and battery charge
+     limit. The specification demonstrates standard REST conventions, API
+     key authentication, and structured JSON responses.
+  version: 1.0.0
+  contact:
+    name: Vladislav Shopov
+    email: vshoppov@gmail.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: https://mock.solarplc.local
+paths:
+  /system/status:
+    get:
+      operationId: getSystemStatus
+      summary: Get current system status
+      description: Retrieve the system status as a JSON object: battery level, energy flow, battery charge limit.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/systemStatus'
+        '401':
+          description: Missing or invalid API key.
+        '403':
+          description: Authenticated but rejected access.
+        '500':
+          description: Unexpected server error.
+  /system/batterycap:
+    put:
+      operationId: setBatteryCap
+      summary: Set battery charging limit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/setBatteryCapRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/setBatteryCapResponse'
+        '400':
+          description: Supplied value for charge limit is out of range.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/setBatteryCapError'
+        '401':
+          description: Missing or invalid API key.
+        '403':
+          description: Authenticated but rejected access.
+        '500':
+          description: Unexpected server error.
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+  schemas:
+    systemStatus:
+      type: object
+      properties:
+        batteryLevel:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Battery charge level as a percentage.
+        energyFlow:
+          type: integer
+          description: Power flow in watts (W). Positive = battery is charging, negative = battery is discharging.
+        chargeLimit:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: The configured battery charging limit as a percentage.
+        reportedAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of the reading.
+      required: [batteryLevel, energyFlow, chargeLimit, reportedAt]
+      example:
+        batteryLevel: 76
+        energyFlow: -400
+        chargeLimit: 80
+        reportedAt: "2025-07-13T09:30:34Z"
+    setBatteryCapRequest:
+      type: object
+      properties:
+        newBatteryCap:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: The new battery charging limit. 0 and 100 disable the limit.
+      required: [newBatteryCap]
+      example:
+        newBatteryCap: 70
+    setBatteryCapResponse:
+      type: object
+      properties:
+        newBatteryCap:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: The new battery charging limit. 0 and 100 disable the limit.
+        reportedAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of the update.
+      required: [newBatteryCap, reportedAt]
+      example:
+        newBatteryCap: 70
+        reportedAt: "2025-09-10T14:27:00Z"
+    setBatteryCapError:
+      type: object
+      properties:
+        code: { type: string }
+        message: { type: string }
+      required: [code, message]
+      example: { code: "400", message: "Invalid charge limit (must be 0–100)." }
+security:
+  - ApiKeyAuth: []
